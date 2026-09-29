@@ -290,12 +290,12 @@ GATE 3 = PASS
 
 Local SQLite 不視為 Vercel 的永久 Production Database；若需要線上持續寫入，另採 Cloud Database。
 
-### Gate 5 Status — 2026-09-29
+### Gate 5 Verification — 2026-09-29
 
-FastAPI / Vercel 程式入口已完成，Vercel CLI 已登入，GitHub repository 已連至 `taiwan-weather-atlas` 專案，Python 3.12 / `uv` production build 通過。已將輪替後的 `CWA_API_KEY` 以 Secret 設定到 Production 與 Preview；現在推送部署版本並驗證公開 URL。Key 不在 repository、source code 或文件中。
+Vercel Production 已 Ready，GitHub push 會自動觸發部署。公開網址：[Taiwan Weather Atlas](https://taiwan-weather-atlas.vercel.app)。`/api/health` HTTP 200，回報 22 縣市、368 鄉鎮、2,576 筆；西屯區預報 API HTTP 200 並回傳 7 日。正式頁面的 CWA 資料、Leaflet / 377 個 GeoJSON feature、桌面與 390px 手機版均已驗證。輪替後的 `CWA_API_KEY` 僅以 Secret 設定於 Production / Preview，未進 repository、source code 或文件。
 
 ```text
-GATE 5 = IN PROGRESS — Production deployment verification pending
+GATE 5 = PASS
 ```
 
 完成才回報：`GATE 5 = PASS`。
@@ -307,7 +307,7 @@ GATE 5 = IN PROGRESS — Production deployment verification pending
 只有五 Gate 全 PASS 才回報：
 
 ```text
-DIC-2 / AIoT L3 CWA HW1 = COMPLETE    (2026-09-23)
+DIC-2 / AIoT L3 CWA HW1 = COMPLETE    (2026-09-29)
 ```
 
 ## Current Baseline
@@ -326,5 +326,5 @@ Gate 1 = PASS
 Gate 2 = PASS
 Gate 3 = PASS
 Gate 4 = PASS
-Gate 5 = IN PROGRESS — Production deployment verification pending
+Gate 5 = PASS
 ```

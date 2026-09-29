@@ -162,6 +162,8 @@ df = pd.read_sql_query("SELECT * FROM TemperatureForecasts", conn)
 2. 在 Vercel Project Settings → Environment Variables 設定 `CWA_API_KEY`，套用 Production 與 Preview。
 3. 部署後打開 Vercel URL，確認 `/api/health` 顯示 22 縣市、368 鄉鎮，並操作地圖。
 
+Production：<https://taiwan-weather-atlas.vercel.app>
+
 Vercel 的 function filesystem 是暫存環境，`/tmp/weather.db` 僅作 instance-local cache，不能視為永久 Production Database。每個 cold start 會從 CWA 重新取得真實資料；需要持久化線上資料時，應改接託管資料庫。
 
 ## GitHub 與安全
