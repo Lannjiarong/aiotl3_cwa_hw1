@@ -6,7 +6,6 @@ from typing import Any
 
 import requests
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from weather_data import database_summary, read_forecasts, refresh_if_stale
@@ -15,7 +14,6 @@ from weather_data import database_summary, read_forecasts, refresh_if_stale
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / "public"
 app = FastAPI(title="Taiwan Weather GIS", docs_url=None, redoc_url=None)
-app.mount("/assets", StaticFiles(directory=PUBLIC / "assets"), name="assets")
 
 
 def ensure_weather_data() -> bool:
@@ -30,11 +28,6 @@ def ensure_weather_data() -> bool:
                 detail="CWA forecast data is not available. Check CWA_API_KEY and retry.",
             ) from None
         return True
-
-
-@app.get("/", include_in_schema=False)
-def home() -> FileResponse:
-    return FileResponse(PUBLIC / "index.html", media_type="text/html; charset=utf-8")
 
 
 @app.get("/api/health")
@@ -58,3 +51,7 @@ def forecast(
         "stale": stale,
         "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
+
+
+if PUBLIC.is_dir():
+    app.mount("/", StaticFiles(directory=PUBLIC, html=True), name="public")
