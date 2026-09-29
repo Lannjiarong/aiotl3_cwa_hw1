@@ -121,15 +121,23 @@ CWA Authorization Key **不得寫入本文件、source code、README 或 GitHub*
 本機只使用：
 
 ```env
-CWA_API_KEY=<YOUR_CWA_API_KEY>
-```
-
-由專案根目錄 `.env` 提供（已 gitignore）。可複製 `.env.example` 後再填入真實 Key。
-
-> 此 Key 曾出現在聊天室，應視為 **exposed**。請到 [CWA Open Data](https://opendata.cwa.gov.tw/) 重新產生 / rotate，把新 Key 只放進本機 `.env`。不得把實際 Key commit 到 repository。
+[x] 程式結構清晰、錯誤處理、重複執行不重複插入
+[x] requirements.txt 完整
+[x] README 說明如何 RUN / TEST
+[x] .gitignore 包含 .env、*.db cache、__pycache__、Vercel / Node artifacts
+[x] 遠端：https://github.com/Lannjiarong/aiotl3_cwa_hw1
+[x] Commit 不含 API Key
 
 ### Gate 1 Execution
 
+
+### Gate 4 Verification — 2026-09-29
+
+程式與文件已推送到 `origin/master`，commit `73c5bb8`。推送前 staged scan 未找到目前 Key；`.env` 未追蹤、被忽略，且本機 Git history 沒有目前 Key 的比對結果。GitHub remote 已確認收到 commit。
+
+```text
+GATE 4 = PASS
+```
 Goal: 從 CWA Open Data API 的 22 個縣市一週資料集取得真實鄉鎮 Forecast JSON。
 
 1. 僅使用上述 22 個 Swagger 官方一週 Dataset ID，不得混用縣市層級 dataset 或假資料。
@@ -282,6 +290,14 @@ GATE 3 = PASS
 
 Local SQLite 不視為 Vercel 的永久 Production Database；若需要線上持續寫入，另採 Cloud Database。
 
+### Gate 5 Status — 2026-09-29
+
+FastAPI / Vercel 程式入口已完成，但尚未部署：Vercel CLI 回報未登入，GitHub 此 commit 也沒有 Vercel deployment。Production `CWA_API_KEY` 尚未設定。部署前須登入 Vercel，並確認 `.env` 內的 Key 已在 CWA 輪替；不可將曾暴露的舊 Key 設為雲端環境變數。
+
+```text
+GATE 5 = BLOCKED — Vercel authentication and rotated CWA key confirmation required
+```
+
 完成才回報：`GATE 5 = PASS`。
 
 ---
@@ -309,6 +325,6 @@ CWA API → Database → Local Taiwan GIS → GitHub → Vercel
 Gate 1 = PASS
 Gate 2 = PASS
 Gate 3 = PASS
-Gate 4 = IN PROGRESS
-Gate 5 = LOCKED
+Gate 4 = PASS
+Gate 5 = BLOCKED — Vercel login / rotated CWA_API_KEY confirmation
 ```
