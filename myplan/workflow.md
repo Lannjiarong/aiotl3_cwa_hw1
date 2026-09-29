@@ -292,10 +292,10 @@ Local SQLite 不視為 Vercel 的永久 Production Database；若需要線上持
 
 ### Gate 5 Status — 2026-09-29
 
-FastAPI / Vercel 程式入口已完成，但尚未部署：Vercel CLI 回報未登入，GitHub 此 commit 也沒有 Vercel deployment。Production `CWA_API_KEY` 尚未設定。部署前須登入 Vercel，並確認 `.env` 內的 Key 已在 CWA 輪替；不可將曾暴露的舊 Key 設為雲端環境變數。
+FastAPI / Vercel 程式入口已完成，Vercel CLI 已登入，GitHub repository 已連至 `taiwan-weather-atlas` 專案，Python 3.12 / `uv` production build 通過。已將輪替後的 `CWA_API_KEY` 以 Secret 設定到 Production 與 Preview；現在推送部署版本並驗證公開 URL。Key 不在 repository、source code 或文件中。
 
 ```text
-GATE 5 = BLOCKED — Vercel authentication and rotated CWA key confirmation required
+GATE 5 = IN PROGRESS — Production deployment verification pending
 ```
 
 完成才回報：`GATE 5 = PASS`。
@@ -326,5 +326,5 @@ Gate 1 = PASS
 Gate 2 = PASS
 Gate 3 = PASS
 Gate 4 = PASS
-Gate 5 = BLOCKED — Vercel login / rotated CWA_API_KEY confirmation
+Gate 5 = IN PROGRESS — Production deployment verification pending
 ```
