@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#183a35">
+    <meta name="description" content="中央氣象署真實鄉鎮預報資料與台灣互動地圖。">
+    <title>台灣天氣圖鑑 | CWA Forecast</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="/assets/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="台灣天氣圖鑑首頁">
+        <span class="brand-mark"><i data-lucide="cloud-sun-rain"></i></span>
+        <span class="brand-copy"><strong>台灣天氣圖鑑</strong><small>TAIWAN WEATHER ATLAS</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="source-label"><span class="live-dot"></span>中央氣象署・真實預報</span>
+        <span class="updated-label" id="updated-at">資料載入中</span>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">TERRITORY / 01</p>
+            <h1 id="map-heading">台灣鄉鎮預報</h1>
+          </div>
+          <div class="coverage"><strong id="township-count">--</strong><span>鄉鎮市區</span><b></b><strong id="county-count">--</strong><span>縣市</span></div>
+        </div>
+
+        <div class="map-toolbar" aria-label="地圖篩選">
+          <label class="control"><span>預報日期</span><input id="forecast-date" type="date" aria-label="預報日期"></label>
+          <label class="control"><span>顯示指標</span><select id="map-metric" aria-label="地圖顯示指標"><option value="t">平均氣溫</option><option value="maxt">最高氣溫</option><option value="mint">最低氣溫</option><option value="pop">降雨機率</option></select></label>
+          <label class="control county-control"><span>縣市</span><select id="county-filter" aria-label="篩選縣市"><option value="">全台灣</option></select></label>
+          <label class="control region-control"><span>快速定位</span><select id="region-search" aria-label="快速選擇鄉鎮"><option value="">選擇鄉鎮市區</option></select></label>
+        </div>
+
+        <div class="map-frame">
+          <div id="taiwan-map" role="application" aria-label="台灣鄉鎮天氣互動地圖"></div>
+          <div class="map-loading" id="map-loading"><span class="loader"></span><span>正在載入台灣地圖與真實預報</span></div>
+          <div class="map-legend" id="map-legend" aria-label="地圖圖例"></div>
+          <div class="map-attribution">Map data © OpenStreetMap contributors · 鄉鎮界線 © g0v/twgeojson</div>
+        </div>
+
+        <div class="map-footnote"><i data-lucide="info"></i><span>點選地圖上的鄉鎮，查看未來 7 日預報。色階代表所選日期的平均氣溫。</span></div>
+      </section>
+
+      <aside class="detail-section" aria-labelledby="detail-heading">
+        <div class="detail-header">
+          <div>
+            <p class="eyebrow">LOCAL FORECAST / 02</p>
+            <h2 id="detail-heading">鄉鎮觀測窗</h2>
+          </div>
+          <span class="location-mark"><i data-lucide="map-pin"></i></span>
+        </div>
+
+        <div class="place-picker">
+          <label for="region-search-mobile">選擇鄉鎮市區</label>
+          <select id="region-search-mobile" aria-label="選擇鄉鎮市區"><option value="">點選地圖或搜尋</option></select>
+        </div>
+
+        <div class="selected-place" id="selected-place" aria-live="polite">
+          <span class="place-kicker">目前選取</span>
+          <strong>尚未選擇地區</strong>
+          <span>從地圖或上方搜尋選擇鄉鎮</span>
+        </div>
+
+        <div class="weather-strip" id="weather-strip">
+          <div class="weather-item"><span>平均</span><strong id="selected-temp">--<small>°</small></strong></div>
+          <div class="weather-item high"><span>最高</span><strong id="selected-max">--<small>°</small></strong></div>
+          <div class="weather-item low"><span>最低</span><strong id="selected-min">--<small>°</small></strong></div>
+          <div class="weather-item rain"><span>降雨機率</span><strong id="selected-pop">--<small>%</small></strong></div>
+        </div>
+
+        <div class="chart-section">
+          <div class="subsection-heading"><h3>七日溫度曲線</h3><span>°C</span></div>
+          <div class="chart-wrap"><canvas id="temperature-chart" aria-label="七日最高與最低氣溫折線圖"></canvas><p class="empty-chart" id="empty-chart">選擇鄉鎮後顯示預報</p></div>
+          <div class="chart-legend"><span><i class="legend-max"></i>最高溫</span><span><i class="legend-min"></i>最低溫</span></div>
+        </div>
+
+        <div class="table-section">
+          <div class="subsection-heading"><h3>每日預報</h3><span id="table-range">NEXT 7 DAYS</span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>日期</th><th>天氣</th><th>降雨</th><th>低溫</th><th>高溫</th></tr></thead>
+              <tbody id="forecast-table"><tr><td colspan="5" class="table-empty">等待選取地區</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="data-note"><i data-lucide="database"></i><span>資料由 CWA Open Data 更新，經 SQLite 整理</span></div>
+      </aside>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>
